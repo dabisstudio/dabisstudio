@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { inter, matter } from "./fonts";
 import "./globals.css";
 import Link from "next/link";
+import CustomCursor from "@/components/ui/custom-cursor";
+import PageTransition from "@/components/ui/page-transition";
+import MobileMenu from "@/components/ui/mobile-menu";
 
 export const metadata: Metadata = {
   title: "Studio Gusto - Creative Agency",
@@ -16,6 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${matter.variable} min-h-screen bg-black text-white font-matter`}>
+        <CustomCursor />
+        <PageTransition />
+
         <header className="dabisstudio-container py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
@@ -29,11 +35,13 @@ export default function RootLayout({
             <Link href="/blog" className="nav-link">Blog</Link>
             <Link href="/contact" className="nav-link">Contact</Link>
           </nav>
-          <button className="md:hidden">Menu</button>
+          <MobileMenu />
         </header>
+
         <main>
           {children}
         </main>
+
         <footer className="dabisstudio-container mt-20 py-8 border-t border-zinc-800">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -47,7 +55,7 @@ export default function RootLayout({
             <div className="flex space-x-4">
               <Link href="https://www.facebook.com/gusto.ids/" className="text-sm">Facebook</Link>
               <Link href="https://www.instagram.com/gustoids/" className="text-sm">Instagram</Link>
-              <Link href="https://www.youtube.com/@dabisstudiosrl848" className="text-sm">Youtube</Link>
+              <Link href="https://www.linkedin.com/company/gusto-italian-design-studio/" className="text-sm">LinkedIn</Link>
             </div>
           </div>
         </footer>

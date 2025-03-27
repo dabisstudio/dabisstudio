@@ -1,6 +1,9 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import ProjectCard from "@/components/ui/project-card";
-import SectionHeader from "@/components/ui/section-header";
-import Link from "next/link";
+import AnimatedSection from "@/components/ui/animated-section";
+import { gsap } from 'gsap';
 
 export default function WorksPage() {
   // Projects data
@@ -91,49 +94,96 @@ export default function WorksPage() {
     },
   ];
 
+  // State for active filter and view mode
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [viewMode, setViewMode] = useState('Grid');
+  const [filteredProjects, setFilteredProjects] = useState(projects);
+
+  // Get all unique categories
+  const allCategories = ['All', ...new Set(projects.flatMap(project => project.categories || []))];
+
+  // Filter projects when activeFilter changes
+  useEffect(() => {
+    if (activeFilter === 'All') {
+      setFilteredProjects(projects);
+    } else {
+      const filtered = projects.filter(project =>
+        project.categories && project.categories.includes(activeFilter)
+      );
+      setFilteredProjects(filtered);
+    }
+
+    // Animate the filtered projects
+    gsap.fromTo('.project-card',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power3.out' }
+    );
+  }, [activeFilter]);
+
   return (
     <div className="dabisstudio-container py-20">
-      <SectionHeader title="All projects" count={35} />
+      <AnimatedSection animation="fadeIn">
+        <div className="flex items-center justify-between mb-12">
+          <h1 className="text-4xl md:text-6xl font-medium">
+            All projects <span className="text-sm align-top ml-2 opacity-60">{projects.length}</span>
+          </h1>
+        </div>
+      </AnimatedSection>
 
-      {/* Filters */}
-      <div className="mb-12 flex flex-wrap gap-4">
-        <button className="px-3 py-1 border border-zinc-800 rounded-full text-sm hover:bg-zinc-800 transition-colors">
-          Type
-        </button>
-        <button className="px-3 py-1 border border-zinc-800 rounded-full text-sm hover:bg-zinc-800 transition-colors">
-          Client
-        </button>
-        <button className="px-3 py-1 border border-zinc-800 rounded-full text-sm hover:bg-zinc-800 transition-colors">
-          Year
-        </button>
-      </div>
+      <AnimatedSection animation="fadeIn" delay={0.2}>
+        <div className="mb-12 border-t border-b border-zinc-800 py-4">
+          <div className="flex flex-col md:flex-row justify-between">
+            <div className="mb-4 md:mb-0">
+              <h2 className="text-sm uppercase mb-2 opacity-70">CHANGE VIEW</h2>
+              <div className="flex space-x-4">
+                <button
+                  className={`text-sm ${viewMode === 'Grid' ? 'opacity-100 font-medium' : 'opacity-60'}`}
+                  onClick={() => setViewMode('Grid')}
+                >
+                  Grid
+                </button>
+                <button
+                  className={`text-sm ${viewMode === 'List' ? 'opacity-100 font-medium' : 'opacity-60'}`}
+                  onClick={() => setViewMode('List')}
+                >
+                  List
+                </button>
+              </div>
+            </div>
 
-      {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project, index) => (
-          <ProjectCard
-            key={index}
-            title={project.title}
-            client={project.client}
-            image={project.image}
-            slug={project.slug}
-            categories={project.categories}
-          />
-        ))}
-      </div>
+            <div>
+              <h2 className="text-sm uppercase mb-2 opacity-70">TYPE</h2>
+              <div className="flex flex-wrap gap-4">
+                {allCategories.map(category => (
+                  <button
+                    key={category}
+                    className={`text-sm ${activeFilter === category ? 'opacity-100 font-medium' : 'opacity-60'}`}
+                    onClick={() => setActiveFilter(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
 
-      {/* Awards */}
-      <div className="mt-20 text-center">
-        <p className="mb-4">Discover all the honors of our projects</p>
-        <Link href="/awards" className="inline-flex items-center border-b border-white pb-1">
-          <span className="mr-2">All Awards</span>
-          <img
-            src="https://ext.same-assets.com/3955289247/2518507755.svg"
-            alt="Arrow"
-            className="w-4 h-4"
-          />
-        </Link>
-      </div>
+      <AnimatedSection animation="fadeIn" delay={0.4}>
+        <div className={`grid ${viewMode === 'Grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-8`}>
+          {filteredProjects.map((project) => (
+            <ProjectCard
+              key={project.slug}
+              title={project.title}
+              client={project.client}
+              image={project.image}
+              slug={project.slug}
+              categories={project.categories}
+              viewMode={viewMode}
+            />
+          ))}
+        </div>
+      </AnimatedSection>
     </div>
   );
 }
