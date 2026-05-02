@@ -127,6 +127,36 @@ body::after {
   -webkit-text-fill-color: transparent;
 }
 
+/* Card spotlight — mouse-tracking radial glow */
+.card-spotlight {
+  --mx: 50%;
+  --my: 50%;
+  --spotlight-opacity: 0;
+}
+.card-spotlight .spotlight-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    circle at var(--mx) var(--my),
+    rgba(229, 3, 57, 0.11) 0%,
+    transparent 62%
+  );
+  opacity: var(--spotlight-opacity);
+  transition: opacity 0.45s ease;
+}
+
+/* CTA rotating gradient border */
+@keyframes rotateConic {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.cta-border-ring {
+  animation: rotateConic 5s linear infinite;
+}
+
 /* Infinite marquee animations */
 @keyframes marquee {
   from { transform: translateX(0); }

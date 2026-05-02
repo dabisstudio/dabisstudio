@@ -1,12 +1,13 @@
 
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "wouter";
 import Button from "@/components/Button";
 import ScrollReveal from "@/components/ScrollReveal";
+import ScrollTicker from "@/components/ScrollTicker";
 import MorphingParticles from "@/components/MorphingParticles";
 import LogoMarquee from "@/components/LogoMarquee";
 import { WebGLErrorBoundary } from "@/components/WebGLErrorBoundary";
@@ -138,6 +139,25 @@ const testimonials = [
   }
 ];
 
+// Mouse-tracking spotlight card wrapper
+function SpotlightCard({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    ref.current.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+    ref.current.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    ref.current.style.setProperty("--spotlight-opacity", "1");
+  };
+  const onMouseLeave = () => ref.current?.style.setProperty("--spotlight-opacity", "0");
+  return (
+    <div ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} className={`card-spotlight ${className}`}>
+      <div className="spotlight-layer" />
+      {children}
+    </div>
+  );
+}
+
 function useCountUp(to: number, delay = 1.0, duration = 1.8) {
   const [val, setVal] = useState(0);
   useEffect(() => {
@@ -168,6 +188,18 @@ export default function HomePage() {
 
   // Case Studies State
   const [activeCase, setActiveCase] = useState(caseStudies[0]);
+
+  // Cursor label for case studies hover
+  const [caseHover, setCaseHover] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+
+  // Parallax hero orb — native scroll listener (works alongside Lenis)
+  const [heroScrollY, setHeroScrollY] = useState(0);
+  useEffect(() => {
+    const onScroll = () => setHeroScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Count-up stats (start after subRef entrance at ~delay 0.9s)
   const projectCount = useCountUp(50, 1.1);
@@ -277,8 +309,14 @@ export default function HomePage() {
           </h2>
         </div>
 
-        {/* Light Ray - Top Left */}
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 blur-[100px] -translate-x-1/2 -translate-y-1/2 z-0" />
+        {/* Light Ray - Top Left — parallax on scroll */}
+        <div
+          className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 blur-[100px] z-0 pointer-events-none"
+          style={{
+            transform: `translate(calc(-50% + ${heroScrollY * 0.08}px), calc(-50% + ${heroScrollY * 0.12}px))`,
+            willChange: "transform",
+          }}
+        />
 
         <div className="w-main mx-auto z-10 relative h-full flex flex-col pointer-events-auto">
           {/* Headline - Centered with offsets */}
@@ -357,8 +395,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Scroll Spacer to separate Hero and Services */}
-      <div className="h-[20vh]" />
+      {/* Velocity-driven scroll ticker — separates Hero from Services */}
+      <ScrollTicker />
 
       {/* Services Section */}
       {/* Horizontal Scroll Services Section */}
@@ -374,29 +412,38 @@ export default function HomePage() {
          {/* Horizontal Track */}
          <div ref={servicesRef} className="flex gap-10 pl-[40vw] pr-20 items-center h-full w-max">
             {services.map((service, index) => (
-               <div key={index} className="w-[80vw] sm:w-[500px] h-[600px] bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-10 flex flex-col justify-between shrink-0 hover:border-primary/40 transition-colors group">
-                  <div>
+               <SpotlightCard key={index} className="w-[80vw] sm:w-[500px] h-[600px] bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-10 flex flex-col justify-between shrink-0 hover:border-primary/30 transition-colors duration-300 group">
+                  <div className="relative z-10">
                      <div className="flex justify-between items-start mb-10">
-                        <span className="text-4xl font-mono opacity-40">0{index + 1}</span>
-                        <div className="size-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all">
+                        <span className="text-4xl font-mono opacity-30 group-hover:opacity-60 transition-opacity duration-500">0{index + 1}</span>
+                        <div className="size-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300">
                            <svg className="size-6 -rotate-45 group-hover:rotate-0 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
                         </div>
                      </div>
-                     <h3 className="text-4xl font-semibold mb-6 text-white group-hover:text-primary transition-colors">{service.title}</h3>
-                     <p className="text-lg text-foreground/70 leading-relaxed mb-10">
+                     <h3 className="text-4xl font-semibold mb-6 text-white group-hover:text-primary transition-colors duration-300">{service.title}</h3>
+                     <p className="text-lg text-foreground/60 leading-relaxed mb-10 group-hover:text-foreground/80 transition-colors duration-300">
                         {service.description}
                      </p>
                   </div>
 
-                  <div>
-                     <h4 className="text-sm font-semibold text-foreground/40 uppercase tracking-widest mb-4">Tools & Tech</h4>
+                  <div className="relative z-10">
+                     <h4 className="text-sm font-semibold text-foreground/30 uppercase tracking-widest mb-4">Tools & Tech</h4>
                      <div className="flex flex-wrap gap-2">
-                        {service.tools.map(tool => (
-                           <span key={tool} className="px-3 py-1 bg-white/5 rounded-full text-xs border border-white/5 text-foreground/60">{tool}</span>
+                        {service.tools.map((tool, ti) => (
+                           <motion.span
+                             key={tool}
+                             initial={{ opacity: 0, y: 6 }}
+                             whileInView={{ opacity: 1, y: 0 }}
+                             transition={{ delay: ti * 0.06, duration: 0.4 }}
+                             viewport={{ once: true }}
+                             className="px-3 py-1 bg-white/5 hover:bg-primary/10 rounded-full text-xs border border-white/5 hover:border-primary/30 text-foreground/50 hover:text-white transition-all duration-200 cursor-default"
+                           >
+                             {tool}
+                           </motion.span>
                         ))}
                      </div>
                   </div>
-               </div>
+               </SpotlightCard>
             ))}
          </div>
       </section>
@@ -416,25 +463,30 @@ export default function HomePage() {
           </ScrollReveal>
 
           <div className="flex flex-col lg:flex-row gap-20 items-stretch">
-            {/* List */}
-            <div className="flex-1 flex flex-col">
-              {caseStudies.map((study, index) => (
+            {/* List — with floating cursor label on hover */}
+            <div
+              className="flex-1 flex flex-col relative"
+              onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
+              onMouseEnter={() => setCaseHover(true)}
+              onMouseLeave={() => setCaseHover(false)}
+            >
+              {caseStudies.map((study) => (
                 <div
                   key={study.id}
-                  className={`group relative py-10 border-b border-white/10 transition-all duration-300 cursor-pointer ${
+                  className={`group relative py-10 border-b border-white/10 transition-all duration-300 cursor-none ${
                     activeCase.id === study.id ? "opacity-100" : "opacity-40 hover:opacity-100"
                   }`}
                   onMouseEnter={() => setActiveCase(study)}
                 >
                   <Link href={study.href} className="flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="flex items-center gap-8 w-full md:w-auto">
-                      <span className="text-xl font-mono text-tertiary/80">{study.id}</span>
-                      <h3 className="text-3xl font-semibold">{study.title}</h3>
+                      <span className="text-xl font-mono text-tertiary/80 group-hover:text-primary transition-colors">{study.id}</span>
+                      <h3 className="text-3xl font-semibold group-hover:translate-x-2 transition-transform duration-300">{study.title}</h3>
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap justify-end">
                       {study.tags.map(tag => (
-                        <span key={tag} className="px-4 py-1.5 rounded-full border border-white/10 text-xs text-foreground/80 bg-white/5 uppercase tracking-wide">
+                        <span key={tag} className="px-4 py-1.5 rounded-full border border-white/10 text-xs text-foreground/80 bg-white/5 uppercase tracking-wide group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors duration-300">
                           {tag}
                         </span>
                       ))}
@@ -442,6 +494,25 @@ export default function HomePage() {
                   </Link>
                 </div>
               ))}
+
+              {/* Floating cursor label */}
+              <AnimatePresence>
+                {caseHover && (
+                  <motion.div
+                    className="fixed z-50 pointer-events-none"
+                    style={{ left: cursorPos.x + 16, top: cursorPos.y - 20 }}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.85 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <span className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-semibold uppercase tracking-wider rounded-full shadow-lg shadow-primary/30">
+                      View Project
+                      <svg className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Preview Image */}
@@ -535,30 +606,54 @@ export default function HomePage() {
         <div className="border-b border-white/[0.06]" />
       </section>
 
-      {/* CTA Section - Redesigned */}
+      {/* CTA Section — animated gradient border */}
       <section className="py-20 md:py-32 relative z-10 px-6">
         <div className="w-full max-w-[1000px] mx-auto">
-           <div className="relative rounded-3xl overflow-hidden bg-[#0A0A0A] border border-white/10 p-10 md:p-20 text-center">
-              {/* Purple Glow Background */}
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50 pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-tertiary/20 blur-[100px] pointer-events-none" />
+          {/* Outer wrapper clips the spinning gradient to 1px border */}
+          <div className="relative rounded-3xl p-px overflow-hidden">
+            {/* Spinning conic gradient — scaled up so corners always cover */}
+            <div
+              className="cta-border-ring absolute -inset-[120%] pointer-events-none"
+              style={{
+                background: "conic-gradient(from 0deg, #E50339 0%, #5B4CF5 35%, #A855F7 65%, #E50339 100%)",
+              }}
+            />
+
+            {/* Inner card sits atop the gradient, leaving 1px visible as border */}
+            <div className="relative rounded-[calc(1.5rem-1px)] overflow-hidden bg-[#0A0A0A] p-10 md:p-20 text-center">
+              {/* Corner glows */}
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/15 via-transparent to-transparent opacity-60 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-[350px] h-[350px] bg-tertiary/20 blur-[120px] pointer-events-none" />
 
               <div className="relative z-10 flex flex-col items-center">
-                 <h2 className="text-4xl md:text-6xl font-semibold mb-10 leading-tight">
-                    We turn bold ideas into <br/>
-                    <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">powerful digital realities.</span>
-                 </h2>
+                <ScrollReveal variant="3d">
+                  <h2 className="text-4xl md:text-6xl font-semibold mb-6 leading-tight">
+                    We turn bold ideas into
+                  </h2>
+                  <h2 className="text-4xl md:text-6xl font-semibold mb-14 leading-tight italic">
+                    <span className="bg-gradient-to-r from-white via-white/90 to-white/50 bg-clip-text text-transparent">
+                      powerful digital realities.
+                    </span>
+                  </h2>
+                </ScrollReveal>
 
-                 <Link href="/contact">
-                    <button className="group relative px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/10 transition-all duration-300">
-                       <span className="text-lg font-medium flex items-center gap-2">
-                          Let&apos;s work together
-                          <span className="group-hover:translate-x-1 transition-transform">→</span>
-                       </span>
-                    </button>
-                 </Link>
+                <Link href="/contact">
+                  <motion.button
+                    className="group relative px-10 py-5 bg-primary hover:bg-primary/90 rounded-full transition-all duration-300 overflow-hidden"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <span className="relative z-10 text-lg font-semibold text-white flex items-center gap-3">
+                      Let&apos;s work together
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-300">→</span>
+                    </span>
+                    {/* Shimmer sweep */}
+                    <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out" />
+                  </motion.button>
+                </Link>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
