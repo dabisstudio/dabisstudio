@@ -8,6 +8,7 @@ import { Link } from "wouter";
 import Button from "@/components/Button";
 import ScrollReveal from "@/components/ScrollReveal";
 import MorphingParticles from "@/components/MorphingParticles";
+import LogoMarquee from "@/components/LogoMarquee";
 import { WebGLErrorBoundary } from "@/components/WebGLErrorBoundary";
 import {
   HiOutlineColorSwatch,
@@ -296,16 +297,13 @@ export default function HomePage() {
               </div>
               <div
                 ref={title2Ref}
-                className="flex justify-center md:justify-end md:pr-20 gap-4 flex-wrap"
+                className="flex justify-center md:justify-end md:pr-16 gap-4 flex-wrap overflow-visible"
               >
                 <span className="word-mask italic font-bold">
                   <span data-word className="inline-block bg-gradient-to-r from-tertiary to-primary bg-clip-text text-transparent">Solutions</span>
                 </span>
                 <span className="word-mask">
-                  <span data-word className="inline-block">That</span>
-                </span>
-                <span className="word-mask">
-                  <span data-word className="inline-block">Matter</span>
+                  <span data-word className="inline-block">That Matter</span>
                 </span>
               </div>
             </h1>
@@ -518,34 +516,23 @@ export default function HomePage() {
 
       {/* Trusted By Section */}
       <section className="py-20 md:py-32 relative z-10 overflow-hidden">
-         <div className="w-full max-w-[1400px] mx-auto text-center px-6">
-            <h3 className="text-3xl md:text-4xl font-semibold mb-4 text-white">Trusted by Industry Leaders</h3>
-            <p className="text-white/60 mb-20">Powering Innovation for Companies Worldwide</p>
+        {/* Background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[200px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />
 
-            {/* Horizon Curve Container */}
-            <div className="relative w-full h-[200px] md:h-[300px] flex justify-center items-center">
+        <div className="w-full mx-auto text-center mb-16 px-6">
+          <ScrollReveal>
+            <h3 className="text-3xl md:text-4xl font-semibold mb-4 text-white">
+              Trusted by Industry Leaders
+            </h3>
+            <p className="text-white/50">Powering Innovation for Companies Worldwide</p>
+          </ScrollReveal>
+        </div>
 
-               {/* Glow effect behind the curve */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[100px] bg-blue-500/20 blur-[100px] rounded-full pointer-events-none" />
-
-               {/* Curved Path Visualization (Subtle) */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[150%] h-[800px] rounded-[50%] border-t border-white/10 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
-
-               {/* Logo Track - Manually positioned for curve effect */}
-               <div className="relative z-10 flex gap-10 md:gap-20 items-end justify-center h-20 -mt-20">
-                  <img src="/images/aws.svg" alt="AWS" className="h-8 md:h-10 opacity-70 hover:opacity-100 transition-opacity" />
-                  <img src="/images/microsoft.svg" alt="Microsoft" className="h-8 md:h-10 opacity-70 hover:opacity-100 transition-opacity -mb-4" />
-                  <img src="/images/ibm.svg" alt="IBM" className="h-10 md:h-14 opacity-70 hover:opacity-100 transition-opacity -mb-8" />
-                  {/* Placeholder for missing logos with text fallback */}
-                  <span className="text-xl font-bold text-white/70 -mb-10 hover:text-white transition-colors">TOYOTA</span>
-                  <span className="text-xl font-bold text-white/70 -mb-10 hover:text-white transition-colors">OWASP</span>
-                  {/* Right side curve up */}
-                  <img src="/images/google-cloud.svg" alt="Google Cloud" className="h-8 md:h-10 opacity-70 hover:opacity-100 transition-opacity -mb-8" />
-                  <span className="text-lg font-bold text-white/70 -mb-4 hover:text-white transition-colors">Lowe&apos;s</span>
-                  <span className="text-lg font-bold text-white/70 hover:text-white transition-colors">Cognizant</span>
-               </div>
-            </div>
-         </div>
+        {/* Divider lines with marquee between */}
+        <div className="border-t border-white/[0.06] py-10">
+          <LogoMarquee />
+        </div>
+        <div className="border-b border-white/[0.06]" />
       </section>
 
       {/* CTA Section - Redesigned */}
