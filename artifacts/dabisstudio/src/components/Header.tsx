@@ -423,7 +423,7 @@ export default function Header() {
               {[
                 { label: "Work", href: "/work" },
                 { label: "Company", href: "/company" },
-                { label: "Services", href: "/all-services" }, // Or drop down
+                { label: "Services", href: "/design-agency" },
                 { label: "Contact", href: "/contact" }
               ].map((item, i) => (
                 <motion.div

@@ -12,7 +12,7 @@ const caseStudies = [
     title: "Clinix AI",
     id: "01",
     tags: ["Web Design", "App Design", "AI Development", "GTM"],
-    image: "/images/CaseStudies/clinix/clinixai.jpg", // Placeholder path, will need to exist
+    image: "/images/CaseStudies/clinix/clinixai.jpg",
     link: "/case-study/clinixAI",
   },
   {
@@ -73,7 +73,6 @@ export default function WorkPage() {
                  <Link href={study.link} className="block group">
                     <span className="text-sm font-mono mb-2 block opacity-60">0{i + 1}</span>
                     <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
-                      {/* Using a placeholder if image fails, or the actual image */}
                       <img
                         src={study.image}
                         alt={study.title}

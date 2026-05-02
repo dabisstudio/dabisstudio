@@ -344,41 +344,21 @@ function TrustedLeadersSection() {
              >
                 {allItems.map((item, i) => {
                    const count = allItems.length;
-                   // Spread items along the top arc (e.g., -60deg to 60deg)?
-                   // No, spread along the entire circle for continuous rotation
                    const angle = (360 / count) * i;
                    return (
                       <div
                          key={i}
-                         className="absolute top-0 left-1/2 -translate-x-1/2 origin-bottom h-[50%]" // h-50% puts the bottom of this div at the center of the circle? No.
-                         // Actually, standard circular positioning:
-                         // We want the item to be at the circumference.
-                         // Rotate parent, item is at top.
                          style={{
                             height: "50%",
                             transformOrigin: "bottom center",
                             transform: `rotate(${angle}deg)`
                          }}
+                         className="absolute top-0 left-1/2 -translate-x-1/2 origin-bottom"
                       >
-                         {/* The Item itself (pushed to the top edge) */}
                          <div
-                           className="relative -top-8 md:-top-10 flex items-center justify-center -rotate-90" // Counter-rotate if needed, but since the parent rotates, the logos will rotate WITH the horizon.
-                           // Wait, if the horizon is a circle, "up" changes.
-                           // In the image, logos are upright relative to the curve normal.
-                           // So they SHOULD rotate with the curve.
-                           // But they might need to be offset?
-                           // Let's try simple text/image first.
-                           style={{ transform: `rotate(${-angle}deg)` }} // Wait, do we want them always upright? The image shows them following the curve normal.
-                           // Image shows them PERPENDICULAR to the curve radius.
-                           // So valid orientation is just sitting on the line.
+                           className="relative -top-8 md:-top-10 flex items-center justify-center -rotate-90"
+                           style={{ transform: `rotate(${-angle}deg)` }}
                          >
-                            {/* We need to cancel the parent rotation for the ITEM itself only if we want them upright?
-                                Look at image: "Lowe's" is tilted. "Toyota" is tilted.
-                                They ARE rotated along the curve.
-                                So no counter-rotation needed on the item itself relative to its spoke.
-                                But the container rotates, so the logo at the top (12 o'clock) is flat.
-                                Logo at 2 o'clock is tilted.
-                            */}
                             {item.src ? (
                                <img src={item.src} alt={item.name} className="h-6 md:h-8 opacity-70 w-auto hover:opacity-100 transition-opacity invert brightness-0" />
                             ) : (
