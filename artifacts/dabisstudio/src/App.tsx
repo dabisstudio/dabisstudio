@@ -20,6 +20,15 @@ import VoiceAgentDemoPage from "@/app/voice-agent-demo/page";
 import VoiceAgentsPage from "@/app/voice-agents/page";
 import WorkPage from "@/app/work/page";
 
+import ClinixAICaseStudy from "@/app/case-study/clinixAI";
+import Synergies4CaseStudy from "@/app/case-study/synergies4";
+import CurehireCaseStudy from "@/app/case-study/curehire";
+import OwaspCaseStudy from "@/app/case-study/owasp";
+import FeatureCaseStudy from "@/app/case-study/feature";
+
+import VendorMatrixPage from "@/app/resources/vendor-matrix";
+import SearchPage from "@/app/dabis/search";
+
 function Router() {
   return (
     <Switch>
@@ -38,6 +47,13 @@ function Router() {
       <Route path="/voice-agent-demo" component={VoiceAgentDemoPage} />
       <Route path="/voice-agents" component={VoiceAgentsPage} />
       <Route path="/work" component={WorkPage} />
+      <Route path="/case-study/clinixAI" component={ClinixAICaseStudy} />
+      <Route path="/case-study/synergies4" component={Synergies4CaseStudy} />
+      <Route path="/case-study/curehire" component={CurehireCaseStudy} />
+      <Route path="/case-study/owasp" component={OwaspCaseStudy} />
+      <Route path="/case-study/feature" component={FeatureCaseStudy} />
+      <Route path="/resources/vendor-matrix" component={VendorMatrixPage} />
+      <Route path="/dabis/search" component={SearchPage} />
       <Route component={NotFound} />
     </Switch>
   );

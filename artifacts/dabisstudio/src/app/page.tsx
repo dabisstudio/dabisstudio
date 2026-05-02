@@ -147,11 +147,6 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
 
-  // We use a ref for morphProgress to avoid re-renders of the whole page,
-  // but we need to pass it to the Canvas.
-  // Wait, React Three Fiber components can be reactive. Let's use state for the prop.
-  // Ideally, for 60fps scroll scrub, we might want to bypass React state,
-  // but let's try state first for simplicity.
   const [morphProgress, setMorphProgress] = useState(0);
 
   // Case Studies State
@@ -202,13 +197,8 @@ export default function HomePage() {
                pin: true,
                scrub: 0.5, // dampen for smoothness
                onUpdate: (self) => {
-                   // Map scroll progress (0 to 1) to Morph Progress (0 to 6)
-                   // We have 6 items, so 0->1 should take us from Shape 0 (sphere) -> Shape 6 (shield) ?
-                   // Actually,
-                   // 0.0 - 0.1: Sphere -> Cube (Morph 0->1)
-
-                   // Let's simple map 0-1 to 0-6
-                   const p = self.progress * 6.5; // go slightly past 6 to ensure completion
+                   // Map scroll progress (0-1) to morph shape index (0-6)
+                   const p = self.progress * 6.5;
                    setMorphProgress(p);
                }
             }
