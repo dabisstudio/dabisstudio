@@ -55,8 +55,8 @@ export default function ContactPage() {
                     <div className="flex flex-col gap-8 text-lg font-light opacity-80">
                         <p>
                           Let's talk about your next big idea. Use the form to tell us more, or simply drop us an email at{" "}
-                          <a href="mailto:atom@antimatterai.com" className="text-cyan-400 underline decoration-cyan-400/30 hover:decoration-cyan-400 transition-all">
-                            atom@antimatterai.com
+                          <a href="mailto:hello@dabisstudio.com" className="text-cyan-400 underline decoration-cyan-400/30 hover:decoration-cyan-400 transition-all">
+                            hello@dabisstudio.com
                           </a>
                         </p>
 

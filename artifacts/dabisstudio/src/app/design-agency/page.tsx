@@ -46,7 +46,6 @@ export default function DesignAgencyPage() {
       }
       services={services}
       videoSrc="https://ailcmdpnkzgwvwsnxlav.supabase.co/storage/v1/object/public/media/website_background_loop.mp4"
-      // poster="/images/Antimatter-astronaut-fallback.webp" // Missing asset
     />
   );
 }

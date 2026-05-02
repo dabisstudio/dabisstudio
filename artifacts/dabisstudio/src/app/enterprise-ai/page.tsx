@@ -190,7 +190,7 @@ export default function EnterpriseAIPage() {
             </div>
 
             <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4">
-               {/* 1. Antimatter */}
+               {/* 1. Dabis Studio */}
                <div className="aspect-[4/3] bg-white/5 border border-white/10 rounded-xl flex flex-col items-center justify-center p-6 hover:bg-white/10 transition-colors">
                   <img src="/images/dabis-logo.png" alt="Dabis Studio" className="mb-4 opacity-90 object-contain h-6 w-auto" />
                   <span className="text-[10px] text-white/30 uppercase tracking-widest text-center">Dabis Studio</span>

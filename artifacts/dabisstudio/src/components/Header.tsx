@@ -86,7 +86,7 @@ const services = [
   },
 ];
 
-const atomProducts = [
+const dabisProducts = [
   {
     title: "Dabis Framework",
     href: "/enterprise-ai",
@@ -318,7 +318,7 @@ export default function Header() {
                       className="absolute top-full left-1/2 -translate-x-1/2 pt-6"
                     >
                       <div className="w-[380px] bg-[#151515] border border-white/10 rounded-xl p-4 shadow-2xl">
-                        {atomProducts.map((product) => (
+                        {dabisProducts.map((product) => (
                           <Link
                             key={product.title}
                             href={product.href}
