@@ -1,7 +1,9 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { AnimatePresence, motion } from "framer-motion";
 import LenisProvider from "@/components/LenisProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Cursor from "@/components/Cursor";
 import NotFound from "@/pages/not-found";
 
 import HomePage from "@/app/page";
@@ -59,13 +61,31 @@ function Router() {
   );
 }
 
+function AnimatedRoutes() {
+  const [location] = useLocation();
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={location}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+      >
+        <Router />
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function App() {
   return (
     <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <LenisProvider>
+        <Cursor />
         <Header />
         <main>
-          <Router />
+          <AnimatedRoutes />
         </main>
         <Footer />
       </LenisProvider>

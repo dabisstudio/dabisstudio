@@ -137,6 +137,22 @@ const testimonials = [
   }
 ];
 
+function useCountUp(to: number, delay = 1.0, duration = 1.8) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    const obj = { n: 0 };
+    const tween = gsap.to(obj, {
+      n: to,
+      delay,
+      duration,
+      ease: "power2.out",
+      onUpdate() { setVal(Math.round(obj.n)); },
+    });
+    return () => { tween.kill(); };
+  }, [to, delay, duration]);
+  return val;
+}
+
 export default function HomePage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const title1Ref = useRef<HTMLDivElement>(null);
@@ -152,23 +168,42 @@ export default function HomePage() {
   // Case Studies State
   const [activeCase, setActiveCase] = useState(caseStudies[0]);
 
+  // Count-up stats (start after subRef entrance at ~delay 0.9s)
+  const projectCount = useCountUp(50, 1.1);
+  const satisfactionCount = useCountUp(100, 1.2);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero Entrance
-      gsap.fromTo(
-        title1Ref.current,
-        { opacity: 0, x: 150 },
-        { opacity: 1, x: 0, duration: 1.5, ease: "power3.out", delay: 0.2 }
-      );
-      gsap.fromTo(
-        title2Ref.current,
-        { opacity: 0, x: -150 },
-        { opacity: 1, x: 0, duration: 1.5, ease: "power3.out", delay: 0.2 }
-      );
+      // Hero Entrance — word-level slide-up stagger
+      const words1 = title1Ref.current
+        ? Array.from(title1Ref.current.querySelectorAll("[data-word]"))
+        : [];
+      const words2 = title2Ref.current
+        ? Array.from(title2Ref.current.querySelectorAll("[data-word]"))
+        : [];
+
+      if (words1.length) {
+        gsap.from(words1, {
+          y: "110%",
+          duration: 1.15,
+          ease: "power4.out",
+          stagger: 0.08,
+          delay: 0.1,
+        });
+      }
+      if (words2.length) {
+        gsap.from(words2, {
+          y: "110%",
+          duration: 1.15,
+          ease: "power4.out",
+          stagger: 0.07,
+          delay: 0.38,
+        });
+      }
       gsap.fromTo(
         subRef.current,
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.8 }
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.9 }
       );
 
       // Hero Scroll Effect (Fade out text)
@@ -244,21 +279,34 @@ export default function HomePage() {
         {/* Light Ray - Top Left */}
         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 blur-[100px] -translate-x-1/2 -translate-y-1/2 z-0" />
 
-        <div className="w-main mx-auto z-10 relative h-full flex flex-col justify-center pointer-events-auto">
+        <div className="w-main mx-auto z-10 relative h-full flex flex-col pointer-events-auto">
           {/* Headline - Centered with offsets */}
-          <div className="flex flex-col items-center justify-center flex-1">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-light leading-tight mb-6 tracking-tight relative z-10 w-full max-w-[1200px]">
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-light leading-[1.1] mb-6 tracking-tight relative z-10 w-full max-w-[1200px]">
               <div
                 ref={title1Ref}
-                className="opacity-0 flex justify-center md:justify-start md:pl-20"
+                className="flex justify-center md:justify-start md:pl-20 gap-4 flex-wrap"
               >
-                Building <span className="italic font-bold ml-4 bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">Digital</span>
+                <span className="word-mask">
+                  <span data-word className="inline-block">Building</span>
+                </span>
+                <span className="word-mask italic font-bold">
+                  <span data-word className="inline-block bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">Digital</span>
+                </span>
               </div>
               <div
                 ref={title2Ref}
-                className="opacity-0 flex justify-center md:justify-end md:pr-20"
+                className="flex justify-center md:justify-end md:pr-20 gap-4 flex-wrap"
               >
-                <span className="italic font-bold mr-4 bg-gradient-to-r from-tertiary to-primary bg-clip-text text-transparent">Solutions</span> That Matter
+                <span className="word-mask italic font-bold">
+                  <span data-word className="inline-block bg-gradient-to-r from-tertiary to-primary bg-clip-text text-transparent">Solutions</span>
+                </span>
+                <span className="word-mask">
+                  <span data-word className="inline-block">That</span>
+                </span>
+                <span className="word-mask">
+                  <span data-word className="inline-block">Matter</span>
+                </span>
               </div>
             </h1>
           </div>
@@ -283,16 +331,16 @@ export default function HomePage() {
             {/* Bottom Right: Stats */}
             <div className="flex gap-8 md:gap-16">
               <div className="text-left">
-                <div className="text-3xl md:text-4xl font-bold flex items-center">
-                  50<span className="text-tertiary text-2xl">+</span>
+                <div className="text-3xl md:text-4xl font-bold flex items-center tabular-nums">
+                  {projectCount}<span className="text-primary text-2xl">+</span>
                 </div>
                 <div className="text-xs text-foreground/60 uppercase tracking-wider mt-1 leading-tight">
                   Projects<br/>Delivered
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-3xl md:text-4xl font-bold flex items-center">
-                  100<span className="text-tertiary text-2xl">%</span>
+                <div className="text-3xl md:text-4xl font-bold flex items-center tabular-nums">
+                  {satisfactionCount}<span className="text-primary text-2xl">%</span>
                 </div>
                 <div className="text-xs text-foreground/60 uppercase tracking-wider mt-1 leading-tight">
                   Client<br/>Satisfaction
@@ -300,7 +348,7 @@ export default function HomePage() {
               </div>
               <div className="text-left">
                 <div className="text-3xl md:text-4xl font-bold flex items-center">
-                  24<span className="text-tertiary text-2xl">/</span>7
+                  24<span className="text-primary text-2xl">/</span>7
                 </div>
                 <div className="text-xs text-foreground/60 uppercase tracking-wider mt-1 leading-tight">
                   Support<br/>Available
