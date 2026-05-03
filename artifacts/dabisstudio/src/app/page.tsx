@@ -28,52 +28,58 @@ const services = [
     title: "Product Design",
     description:
       "End-to-end product design—from research and UX flows to polished UI systems and developer-ready handoff.",
+    features: ["User Research & Persona Mapping", "Wireframing & Interactive Prototypes", "Design System Architecture", "Motion & Interaction Design", "Dev-Ready Handoff (Tokens + Zeplin)"],
     tools: ["Figma", "Sketch", "Xd", "Blender", "Spline", "After Effects"],
     href: "/design-agency",
-    morphValue: 1, // Cube
+    morphValue: 1,
   },
   {
     id: "02",
     title: "Development",
     description:
       "Robust, scalable products across web and mobile—from elegant UIs to reliable APIs and automated DevOps.",
+    features: ["Full-Stack Web Applications", "iOS & Android (Flutter / Native)", "REST & GraphQL API Design", "CI/CD Pipeline & DevOps", "Performance & Core Web Vitals"],
     tools: ["React", "Next.js", "Node", "Flutter", "Docker", "TypeScript"],
     href: "/development-agency",
-    morphValue: 2, // Code
+    morphValue: 2,
   },
   {
     id: "03",
     title: "GTM Strategy",
     description:
       "Data-driven go-to-market for SaaS and AI—clear positioning, smart pricing, and repeatable growth loops.",
+    features: ["ICP Definition & Market Positioning", "Pricing Architecture", "Sales Enablement & Playbooks", "Growth Hacking & Demand Gen", "Analytics Dashboards & KPI Tracking"],
     tools: ["HubSpot", "Salesforce", "Google Analytics", "Mixpanel", "Stripe", "Zapier"],
     href: "/gtm-strategy",
-    morphValue: 3, // Graph
+    morphValue: 3,
   },
   {
     id: "04",
     title: "Healthcare Apps",
     description:
       "Secure, compliant healthcare software—from telehealth to EHR integrations—built for HIPAA and auditability.",
-    tools: ["AWS", "Google Cloud", "FHIR", "Hipaa", "HL7", "Swift"],
+    features: ["HIPAA-Compliant Architecture", "EHR / EMR Integration (HL7, FHIR)", "Telehealth Platform Development", "Patient Portal & Scheduling", "Clinical Decision Support Tools"],
+    tools: ["AWS", "Google Cloud", "FHIR", "HIPAA", "HL7", "Swift"],
     href: "/healthcare-apps",
-    morphValue: 4, // DNA
+    morphValue: 4,
   },
   {
     id: "05",
     title: "AI Development",
     description: "Custom AI agents, LLM integration, and predictive models that drive business intelligence.",
+    features: ["Custom LLM Agents & Chatbots", "RAG Pipeline Engineering", "Computer Vision Systems", "Predictive Analytics & Forecasting", "AI Strategy & Integration Consulting"],
     tools: ["OpenAI", "Python", "TensorFlow", "LangChain", "Pinecone"],
     href: "/ai-development",
-    morphValue: 5, // Star
+    morphValue: 5,
   },
   {
     id: "06",
     title: "IoT Solutions",
     description: "Connected device ecosystems with secure data transmission and real-time monitoring dashboards.",
+    features: ["Sensor & Device Firmware", "Real-Time Data Pipelines", "Edge Computing Deployments", "Secure OTA Firmware Updates", "Industrial Automation Interfaces"],
     tools: ["MQTT", "Raspberry Pi", "Arduino", "Azure IoT", "Zigbee"],
     href: "/iot-development",
-    morphValue: 6, // Shield
+    morphValue: 6,
   }
 ];
 
@@ -139,6 +145,125 @@ const testimonials = [
   }
 ];
 
+// Accordion card for the Services section
+function AccordionCard({
+  service,
+  active,
+  index,
+  onClick,
+}: {
+  service: (typeof services)[0];
+  active: boolean;
+  index: number;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className={`relative rounded-2xl overflow-hidden border transition-[flex,border-color,background] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] h-full cursor-pointer ${
+        active
+          ? "flex-[5] border-white/[0.12] bg-gradient-to-br from-secondary/[0.12] via-white/[0.03] to-primary/[0.05]"
+          : "flex-[0.24] border-white/[0.05] bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.03]"
+      }`}
+    >
+      {/* Collapsed state — vertical number + title + arrow */}
+      <div
+        className={`absolute inset-0 flex flex-col items-center justify-between py-8 px-2 transition-opacity duration-300 ${
+          active ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
+        <span
+          className="text-xs font-mono text-white/20 tracking-[0.25em] shrink-0"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+        >
+          0{index + 1}
+        </span>
+        <span
+          className="text-[10px] font-medium text-white/10 tracking-wider shrink-0 truncate"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", maxHeight: 140 }}
+        >
+          {service.title}
+        </span>
+        <div className="size-7 rounded-full border border-white/[0.08] flex items-center justify-center shrink-0">
+          <svg className="size-3 text-white/15 rotate-90" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Expanded content */}
+      <AnimatePresence mode="wait">
+        {active && (
+          <motion.div
+            key={service.id}
+            initial={{ opacity: 0, x: 14 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.45, delay: 0.18, ease: [0.4, 0, 0.2, 1] }}
+            className="absolute inset-0 p-8 lg:p-10 flex flex-col justify-between overflow-hidden"
+          >
+            {/* Header */}
+            <div>
+              <div className="flex justify-between items-start mb-6">
+                <span className="text-5xl font-mono text-white/[0.07] font-light leading-none">
+                  0{index + 1}
+                </span>
+                <div className="size-10 rounded-full border border-primary/40 bg-primary/10 flex items-center justify-center">
+                  <svg className="size-4 -rotate-45" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-3xl lg:text-4xl xl:text-5xl font-semibold mb-4 leading-tight text-white">
+                {service.title}
+              </h3>
+              <p className="text-sm lg:text-base text-foreground/55 leading-relaxed max-w-[340px]">
+                {service.description}
+              </p>
+            </div>
+
+            {/* Feature bullets */}
+            <div className="flex flex-col gap-2">
+              {service.features.map((feat, fi) => (
+                <motion.div
+                  key={fi}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.28 + fi * 0.07, duration: 0.35, ease: "easeOut" }}
+                  className="flex items-center gap-3 text-sm text-foreground/65"
+                >
+                  <span className="size-1.5 rounded-full bg-primary/80 shrink-0" />
+                  {feat}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Tools stack */}
+            <div>
+              <p className="text-[10px] font-semibold text-foreground/20 uppercase tracking-[0.18em] mb-3">
+                Stack
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {service.tools.map((tool, ti) => (
+                  <motion.span
+                    key={tool}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.5 + ti * 0.05, duration: 0.3 }}
+                    className="px-3 py-1 bg-white/[0.04] rounded-full text-xs border border-white/[0.07] text-foreground/45"
+                  >
+                    {tool}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // Mouse-tracking spotlight card wrapper
 function SpotlightCard({ children, className = "" }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -180,10 +305,9 @@ export default function HomePage() {
   const title2Ref = useRef<HTMLDivElement>(null);
   const subRef = useRef<HTMLDivElement>(null);
 
-  // Services & 3D State
+  // Services accordion state
   const containerRef = useRef<HTMLDivElement>(null);
-  const servicesRef = useRef<HTMLDivElement>(null);
-
+  const [activeIndex, setActiveIndex] = useState(0);
   const [morphProgress, setMorphProgress] = useState(0);
 
   // Case Studies State
@@ -252,30 +376,23 @@ export default function HomePage() {
         }
       });
 
-      // Horizontal Scroll for Services
-      const servicesSection = servicesRef.current;
-      if (servicesSection && containerRef.current) {
-         const totalWidth = servicesSection.scrollWidth - window.innerWidth + 200; // Extra buffer
-
-         const tl = gsap.timeline({
-            scrollTrigger: {
-               trigger: containerRef.current,
-               start: "top top",
-               end: `+=${totalWidth}`,
-               pin: true,
-               scrub: 0.5, // dampen for smoothness
-               onUpdate: (self) => {
-                   // Map scroll progress (0-1) to morph shape index (0-6)
-                   const p = self.progress * 6.5;
-                   setMorphProgress(p);
-               }
-            }
-         });
-
-         tl.to(servicesSection, {
-            x: - (servicesSection.scrollWidth - window.innerWidth + 100),
-            ease: "none",
-         });
+      // Accordion scroll for Services — pin section, step through cards by scroll progress
+      if (containerRef.current) {
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: "top top",
+          end: `+=${services.length * 650}`,
+          pin: true,
+          scrub: 1.2,
+          onUpdate: (self) => {
+            const newIndex = Math.min(
+              Math.floor(self.progress * services.length),
+              services.length - 1
+            );
+            setActiveIndex(newIndex);
+            setMorphProgress(self.progress * 6.5);
+          },
+        });
       }
 
     }, [heroRef, containerRef]);
@@ -398,54 +515,101 @@ export default function HomePage() {
       {/* Velocity-driven scroll ticker — separates Hero from Services */}
       <ScrollTicker />
 
-      {/* Services Section */}
-      {/* Horizontal Scroll Services Section */}
-      <section ref={containerRef} className="relative h-screen flex items-center overflow-hidden bg-transparent">
-         {/* Section Header */}
-         <div className="absolute top-20 left-20 z-10 pointer-events-none">
-            <h2 className="text-5xl font-semibold mb-6">Our Services</h2>
-            <p className="max-w-md text-foreground/60">
-               We offer comprehensive digital solutions that transform your business and drive innovation across every touchpoint.
-            </p>
-         </div>
+      {/* Services Section — Accordion Layout */}
+      <section ref={containerRef} className="relative h-screen overflow-hidden bg-transparent">
+        <div className="flex h-full px-8 lg:px-16 gap-10 items-center">
 
-         {/* Horizontal Track */}
-         <div ref={servicesRef} className="flex gap-10 pl-[40vw] pr-20 items-center h-full w-max">
+          {/* LEFT COLUMN — pinned info panel */}
+          <div className="w-[300px] lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col justify-center gap-8">
+            {/* Animated orbital orb */}
+            <div className="relative w-44 h-44 lg:w-52 lg:h-52">
+              {/* Core glow */}
+              <div className="absolute inset-[28%] rounded-full bg-primary/25 blur-2xl" />
+              <div className="absolute inset-[28%] rounded-full bg-secondary/20 blur-xl" />
+              {/* Outer dashed ring */}
+              <div
+                className="absolute inset-0 rounded-full border border-dashed border-white/[0.07]"
+                style={{ animation: "spin 30s linear infinite reverse" }}
+              />
+              {/* Mid ring with glow */}
+              <div
+                className="absolute inset-[12%] rounded-full border border-secondary/25"
+                style={{ animation: "spin 14s linear infinite" }}
+              />
+              {/* Inner ring */}
+              <div
+                className="absolute inset-[30%] rounded-full border border-primary/35"
+                style={{ animation: "spin 9s linear infinite" }}
+              />
+              {/* Orbiting dot */}
+              <div
+                className="absolute inset-[10%] rounded-full"
+                style={{ animation: "spin 14s linear infinite" }}
+              >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 size-2 rounded-full bg-secondary shadow-[0_0_8px_2px_rgba(91,76,245,0.8)]" />
+              </div>
+            </div>
+
+            {/* Heading */}
+            <div>
+              <span className="text-[10px] font-semibold text-primary uppercase tracking-[0.22em] mb-3 block">
+                What We Do
+              </span>
+              <h2 className="text-4xl lg:text-5xl font-semibold leading-tight mb-4">
+                Our Services
+              </h2>
+              <p className="text-sm text-foreground/45 leading-relaxed">
+                Design, engineering, and strategy—unified under one roof to build digital products that scale.
+              </p>
+            </div>
+
+            {/* Active service indicator */}
+            <div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <span className="text-xs font-mono text-primary/60">
+                    0{activeIndex + 1} / 0{services.length}
+                  </span>
+                  <p className="text-lg font-semibold mt-1 text-white">
+                    {services[activeIndex].title}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Step dots */}
+              <div className="flex gap-2 mt-4">
+                {services.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveIndex(i)}
+                    className={`h-px rounded-full transition-all duration-500 ${
+                      i === activeIndex ? "w-8 bg-primary" : "w-3 bg-white/20 hover:bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN — accordion cards */}
+          <div className="flex-1 flex gap-3 h-[calc(100vh-6rem)] py-10">
             {services.map((service, index) => (
-               <SpotlightCard key={index} className="w-[80vw] sm:w-[500px] h-[600px] bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-10 flex flex-col justify-between shrink-0 hover:border-primary/30 transition-colors duration-300 group">
-                  <div className="relative z-10">
-                     <div className="flex justify-between items-start mb-10">
-                        <span className="text-4xl font-mono opacity-30 group-hover:opacity-60 transition-opacity duration-500">0{index + 1}</span>
-                        <div className="size-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300">
-                           <svg className="size-6 -rotate-45 group-hover:rotate-0 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
-                        </div>
-                     </div>
-                     <h3 className="text-4xl font-semibold mb-6 text-white group-hover:text-primary transition-colors duration-300">{service.title}</h3>
-                     <p className="text-lg text-foreground/60 leading-relaxed mb-10 group-hover:text-foreground/80 transition-colors duration-300">
-                        {service.description}
-                     </p>
-                  </div>
-
-                  <div className="relative z-10">
-                     <h4 className="text-sm font-semibold text-foreground/30 uppercase tracking-widest mb-4">Tools & Tech</h4>
-                     <div className="flex flex-wrap gap-2">
-                        {service.tools.map((tool, ti) => (
-                           <motion.span
-                             key={tool}
-                             initial={{ opacity: 0, y: 6 }}
-                             whileInView={{ opacity: 1, y: 0 }}
-                             transition={{ delay: ti * 0.06, duration: 0.4 }}
-                             viewport={{ once: true }}
-                             className="px-3 py-1 bg-white/5 hover:bg-primary/10 rounded-full text-xs border border-white/5 hover:border-primary/30 text-foreground/50 hover:text-white transition-all duration-200 cursor-default"
-                           >
-                             {tool}
-                           </motion.span>
-                        ))}
-                     </div>
-                  </div>
-               </SpotlightCard>
+              <AccordionCard
+                key={service.id}
+                service={service}
+                active={activeIndex === index}
+                index={index}
+                onClick={() => setActiveIndex(index)}
+              />
             ))}
-         </div>
+          </div>
+        </div>
       </section>
 
       {/* Work Section - Interactive List & Preview */}
