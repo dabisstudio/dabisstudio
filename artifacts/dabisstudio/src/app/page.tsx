@@ -149,22 +149,31 @@ const testimonials = [
 function AccordionCard({
   service,
   active,
+  progress,
   index,
   onClick,
 }: {
   service: (typeof services)[0];
   active: boolean;
+  progress: number;
   index: number;
   onClick: () => void;
 }) {
+  const depth = active ? 1 : 0.7;
+  const lift = active ? -8 : 0;
+  const opacity = active ? 1 : 0.78;
   return (
     <div
       onClick={onClick}
-      className={`relative rounded-2xl overflow-hidden border transition-[flex,border-color,background] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] h-full cursor-pointer ${
+      className={`relative rounded-2xl overflow-hidden border transition-[flex,border-color,background,opacity,transform] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] h-full cursor-pointer ${
         active
-          ? "flex-[5] border-white/[0.12] bg-gradient-to-br from-secondary/[0.12] via-white/[0.03] to-primary/[0.05]"
+          ? "flex-[5] border-white/[0.12] bg-gradient-to-br from-secondary/[0.16] via-white/[0.04] to-primary/[0.08] shadow-[0_0_80px_rgba(91,76,245,0.12)]"
           : "flex-[0.24] border-white/[0.05] bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.03]"
       }`}
+      style={{
+        opacity,
+        transform: `translateY(${lift}px) scale(${depth})`,
+      }}
     >
       {/* Collapsed state — vertical number + title + arrow */}
       <div
@@ -196,10 +205,10 @@ function AccordionCard({
         {active && (
           <motion.div
             key={service.id}
-            initial={{ opacity: 0, x: 14 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.45, delay: 0.18, ease: [0.4, 0, 0.2, 1] }}
+            initial={{ opacity: 0, x: 22, filter: "blur(10px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: -16, filter: "blur(8px)" }}
+            transition={{ duration: 0.55, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
             className="absolute inset-0 p-8 lg:p-10 flex flex-col justify-between overflow-hidden"
           >
             {/* Header */}
@@ -227,9 +236,9 @@ function AccordionCard({
               {service.features.map((feat, fi) => (
                 <motion.div
                   key={fi}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -14 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.28 + fi * 0.07, duration: 0.35, ease: "easeOut" }}
+                  transition={{ delay: 0.3 + fi * 0.08, duration: 0.42, ease: "easeOut" }}
                   className="flex items-center gap-3 text-sm text-foreground/65"
                 >
                   <span className="size-1.5 rounded-full bg-primary/80 shrink-0" />
@@ -247,9 +256,9 @@ function AccordionCard({
                 {service.tools.map((tool, ti) => (
                   <motion.span
                     key={tool}
-                    initial={{ opacity: 0, scale: 0.85 }}
+                    initial={{ opacity: 0, scale: 0.82, y: 4 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + ti * 0.05, duration: 0.3 }}
+                    transition={{ delay: 0.56 + ti * 0.05, duration: 0.32 }}
                     className="px-3 py-1 bg-white/[0.04] rounded-full text-xs border border-white/[0.07] text-foreground/45"
                   >
                     {tool}
@@ -381,14 +390,11 @@ export default function HomePage() {
         ScrollTrigger.create({
           trigger: containerRef.current,
           start: "top top",
-          end: `+=${services.length * 650}`,
+          end: `+=${services.length * 760}`,
           pin: true,
-          scrub: 1.2,
+          scrub: 1.55,
           onUpdate: (self) => {
-            const newIndex = Math.min(
-              Math.floor(self.progress * services.length),
-              services.length - 1
-            );
+            const newIndex = Math.min(Math.round(self.progress * (services.length - 1)), services.length - 1);
             setActiveIndex(newIndex);
             setMorphProgress(self.progress * 6.5);
           },
@@ -517,38 +523,30 @@ export default function HomePage() {
 
       {/* Services Section — Accordion Layout */}
       <section ref={containerRef} className="relative h-screen overflow-hidden bg-transparent">
-        <div className="flex h-full px-8 lg:px-16 gap-10 items-center">
+          <div className="flex h-full px-8 lg:px-16 gap-10 items-center">
 
           {/* LEFT COLUMN — pinned info panel */}
           <div className="w-[300px] lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col justify-center gap-8">
             {/* Animated orbital orb */}
-            <div className="relative w-44 h-44 lg:w-52 lg:h-52">
+            <motion.div
+              className="relative w-44 h-44 lg:w-52 lg:h-52"
+              animate={{ rotate: [0, 6, 0] }}
+              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            >
               {/* Core glow */}
               <div className="absolute inset-[28%] rounded-full bg-primary/25 blur-2xl" />
               <div className="absolute inset-[28%] rounded-full bg-secondary/20 blur-xl" />
               {/* Outer dashed ring */}
-              <div
-                className="absolute inset-0 rounded-full border border-dashed border-white/[0.07]"
-                style={{ animation: "spin 30s linear infinite reverse" }}
-              />
+              <div className="absolute inset-0 rounded-full border border-dashed border-white/[0.07] animate-[spin_30s_linear_infinite_reverse]" />
               {/* Mid ring with glow */}
-              <div
-                className="absolute inset-[12%] rounded-full border border-secondary/25"
-                style={{ animation: "spin 14s linear infinite" }}
-              />
+              <div className="absolute inset-[12%] rounded-full border border-secondary/25 animate-[spin_14s_linear_infinite]" />
               {/* Inner ring */}
-              <div
-                className="absolute inset-[30%] rounded-full border border-primary/35"
-                style={{ animation: "spin 9s linear infinite" }}
-              />
+              <div className="absolute inset-[30%] rounded-full border border-primary/35 animate-[spin_9s_linear_infinite]" />
               {/* Orbiting dot */}
-              <div
-                className="absolute inset-[10%] rounded-full"
-                style={{ animation: "spin 14s linear infinite" }}
-              >
+              <div className="absolute inset-[10%] rounded-full animate-[spin_14s_linear_infinite]">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 size-2 rounded-full bg-secondary shadow-[0_0_8px_2px_rgba(91,76,245,0.8)]" />
               </div>
-            </div>
+            </motion.div>
 
             {/* Heading */}
             <div>
@@ -585,11 +583,13 @@ export default function HomePage() {
               {/* Step dots */}
               <div className="flex gap-2 mt-4">
                 {services.map((_, i) => (
-                  <button
+                  <motion.button
                     key={i}
                     onClick={() => setActiveIndex(i)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.96 }}
                     className={`h-px rounded-full transition-all duration-500 ${
-                      i === activeIndex ? "w-8 bg-primary" : "w-3 bg-white/20 hover:bg-white/40"
+                      i === activeIndex ? "w-8 bg-primary shadow-[0_0_12px_rgba(229,3,57,0.55)]" : "w-3 bg-white/20 hover:bg-white/40"
                     }`}
                   />
                 ))}
@@ -604,6 +604,7 @@ export default function HomePage() {
                 key={service.id}
                 service={service}
                 active={activeIndex === index}
+                progress={Math.abs(activeIndex - index)}
                 index={index}
                 onClick={() => setActiveIndex(index)}
               />
